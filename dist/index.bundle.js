@@ -7904,7 +7904,7 @@ module.exports = ReactHostComponent;
 
 var ReactDOMSelection = __webpack_require__(129);
 
-var containsNode = __webpack_require__(91);
+var containsNode = __webpack_require__(92);
 var focusNode = __webpack_require__(54);
 var getActiveElement = __webpack_require__(55);
 
@@ -9680,6 +9680,8 @@ var App = function (_Component) {
 
       (0, _api2.default)().then(function (data) {
         _this2.setState(data);
+      }).catch(function () {
+        _this2.setState({ empty: true });
       });
     }
   }, {
@@ -9692,6 +9694,11 @@ var App = function (_Component) {
           'h1',
           null,
           'Bench Test'
+        ),
+        this.state.empty && _react2.default.createElement(
+          'h4',
+          { className: 'oops' },
+          'Sorry, No Data Available.'
         ),
         this.state.balance && _react2.default.createElement(
           'table',
@@ -9845,21 +9852,24 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _get = __webpack_require__(103);
+var _promiseReflect = __webpack_require__(89);
 
-var _get2 = _interopRequireDefault(_get);
+var _promiseReflect2 = _interopRequireDefault(_promiseReflect);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var FIRST_PAGE = 1;
+var FIRST_PAGE = 0;
 
 var buildUrl = function buildUrl(page) {
-  return 'http://resttest.bench.co/transactions/' + page + '.json';
+  return 'data/' + page + '.json';
 };
+
 var getPage = function getPage(page) {
-  return (0, _get2.default)(buildUrl(page));
+  return fetch(buildUrl(page)).then(function (res) {
+    return res.ok ? res.json() : Promise.reject('No Data Received for page ' + page);
+  });
 };
 
 var getRemainingPageNumbers = function getRemainingPageNumbers(pagesRemaining) {
@@ -9870,9 +9880,18 @@ var getRemainingPageNumbers = function getRemainingPageNumbers(pagesRemaining) {
   return numbers;
 };
 
+/*
+  In this function I chose to optimize response time
+  by fetching all remaining pages concurrently.
+
+  Obviously this is a solution that doesn't scale,
+  but I thought it would be a nice tweak considering I
+  knew how few pages there were.
+*/
 var fetchRemainingPages = function fetchRemainingPages(pagesRemaining) {
   var remainingPageNumbers = getRemainingPageNumbers(pagesRemaining);
-  return Promise.all(remainingPageNumbers.map(getPage));
+  var promises = remainingPageNumbers.map(getPage);
+  return Promise.all(promises.map(_promiseReflect2.default));
 };
 
 var getBalance = function getBalance(rows) {
@@ -9881,6 +9900,16 @@ var getBalance = function getBalance(rows) {
   }, 0);
 };
 
+/*
+  The fact that I need do download multiple pages in order to
+  calculate the balance is definitely not ideal.
+
+  In the real world, I'd tell the API devs to either provide the total balance
+  as a property in each response, or to provide a separate endpoint for the balance.
+
+  Obviously there aren't any backend devs in coding tests, so I had to do some ugly
+  shared scope stuff to do this efficiently.
+*/
 var loadBalanceData = function loadBalanceData() {
   var rows = void 0;
 
@@ -9895,9 +9924,14 @@ var loadBalanceData = function loadBalanceData() {
   }).then(function (results) {
     // Flatten transactions arrays into the rows array
     results.forEach(function (_ref2) {
-      var transactions = _ref2.transactions;
+      var error = _ref2.error,
+          result = _ref2.result;
 
-      rows = [].concat(_toConsumableArray(rows), _toConsumableArray(transactions));
+      if (error) {
+        console.log(error);
+        return;
+      }
+      rows = [].concat(_toConsumableArray(rows), _toConsumableArray(result.transactions));
     });
 
     return {
@@ -9911,6 +9945,27 @@ exports.default = loadBalanceData;
 
 /***/ }),
 /* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Adapted from http://stackoverflow.com/a/31424853
+var reflect = function reflect(promise) {
+  return promise.then(function (result) {
+    return { result: result, status: 'resolved' };
+  }).catch(function (error) {
+    return { error: error, status: 'rejected' };
+  });
+};
+
+exports.default = reflect;
+
+/***/ }),
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9947,7 +10002,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9964,7 +10019,7 @@ module.exports = camelize;
 
 
 
-var camelize = __webpack_require__(89);
+var camelize = __webpack_require__(90);
 
 var msPattern = /^-ms-/;
 
@@ -9992,7 +10047,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10009,7 +10064,7 @@ module.exports = camelizeStyleName;
  * 
  */
 
-var isTextNode = __webpack_require__(99);
+var isTextNode = __webpack_require__(100);
 
 /*eslint-disable no-bitwise */
 
@@ -10037,7 +10092,7 @@ function containsNode(outerNode, innerNode) {
 module.exports = containsNode;
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10170,7 +10225,7 @@ module.exports = createArrayFromMixed;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10191,8 +10246,8 @@ module.exports = createArrayFromMixed;
 
 var ExecutionEnvironment = __webpack_require__(6);
 
-var createArrayFromMixed = __webpack_require__(92);
-var getMarkupWrap = __webpack_require__(94);
+var createArrayFromMixed = __webpack_require__(93);
+var getMarkupWrap = __webpack_require__(95);
 var invariant = __webpack_require__(1);
 
 /**
@@ -10260,7 +10315,7 @@ module.exports = createNodesFromMarkup;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10361,7 +10416,7 @@ module.exports = getMarkupWrap;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10405,7 +10460,7 @@ function getUnboundedScrollPosition(scrollable) {
 module.exports = getUnboundedScrollPosition;
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10443,7 +10498,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10460,7 +10515,7 @@ module.exports = hyphenate;
 
 
 
-var hyphenate = __webpack_require__(96);
+var hyphenate = __webpack_require__(97);
 
 var msPattern = /^ms-/;
 
@@ -10487,7 +10542,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10517,7 +10572,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10534,7 +10589,7 @@ module.exports = isNode;
  * @typechecks
  */
 
-var isNode = __webpack_require__(98);
+var isNode = __webpack_require__(99);
 
 /**
  * @param {*} object The object to check.
@@ -10547,7 +10602,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10582,7 +10637,7 @@ function memoizeStringOnly(callback) {
 module.exports = memoizeStringOnly;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10610,7 +10665,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = performance || {};
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10627,7 +10682,7 @@ module.exports = performance || {};
  * @typechecks
  */
 
-var performance = __webpack_require__(101);
+var performance = __webpack_require__(102);
 
 var performanceNow;
 
@@ -10647,18 +10702,6 @@ if (performance.now) {
 }
 
 module.exports = performanceNow;
-
-/***/ }),
-/* 103 */
-/***/ (function(module, exports) {
-
-module.exports = function(url) {
-  return fetch(url)
-    .then(function(response) {
-      return response.json();
-    });
-};
-
 
 /***/ }),
 /* 104 */
@@ -11734,10 +11777,10 @@ var CSSProperty = __webpack_require__(58);
 var ExecutionEnvironment = __webpack_require__(6);
 var ReactInstrumentation = __webpack_require__(8);
 
-var camelizeStyleName = __webpack_require__(90);
+var camelizeStyleName = __webpack_require__(91);
 var dangerousStyleValue = __webpack_require__(167);
-var hyphenateStyleName = __webpack_require__(97);
-var memoizeStringOnly = __webpack_require__(100);
+var hyphenateStyleName = __webpack_require__(98);
+var memoizeStringOnly = __webpack_require__(101);
 var warning = __webpack_require__(2);
 
 var processStyleName = memoizeStringOnly(function (styleName) {
@@ -12301,7 +12344,7 @@ var _prodInvariant = __webpack_require__(3);
 var DOMLazyTree = __webpack_require__(17);
 var ExecutionEnvironment = __webpack_require__(6);
 
-var createNodesFromMarkup = __webpack_require__(93);
+var createNodesFromMarkup = __webpack_require__(94);
 var emptyFunction = __webpack_require__(9);
 var invariant = __webpack_require__(1);
 
@@ -16608,7 +16651,7 @@ var ReactHostOperationHistoryHook = __webpack_require__(140);
 var ReactComponentTreeHook = __webpack_require__(7);
 var ExecutionEnvironment = __webpack_require__(6);
 
-var performanceNow = __webpack_require__(102);
+var performanceNow = __webpack_require__(103);
 var warning = __webpack_require__(2);
 
 var hooks = [];
@@ -17203,7 +17246,7 @@ var ReactDOMComponentTree = __webpack_require__(4);
 var ReactUpdates = __webpack_require__(10);
 
 var getEventTarget = __webpack_require__(46);
-var getUnboundedScrollPosition = __webpack_require__(95);
+var getUnboundedScrollPosition = __webpack_require__(96);
 
 /**
  * Find the deepest React component completely containing the root of the

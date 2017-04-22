@@ -11,4 +11,5 @@ If you'd like to run locally, simply clone and install dependencies:
 git clone https://github.com/BlakeTurner/restTest.git
 cd restTest
 npm i
+npm start
 ```
