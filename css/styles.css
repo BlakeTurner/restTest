@@ -1,3 +1,8 @@
+/*
+  I kept the CSS pretty vanilla in the interest of time.
+  In the real world I'd use SASS (or something like it),
+  and I'd spend a lot more time to match the fidelity of the design comp.
+*/
 body {
   background: #EFEDE8;
   font-family: "LLCircularWeb", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;

@@ -13,6 +13,14 @@ const getRemainingPageNumbers = (pagesRemaining) => {
   return numbers;
 };
 
+/*
+  In this function I chose to optimize response time
+  by fetching all remaining pages concurrently.
+
+  Obviously this is a solution that doesn't scale,
+  but I thought it would be a nice tweak considering I
+  knew how few pages there were.
+*/
 const fetchRemainingPages = (pagesRemaining) => {
   const remainingPageNumbers = getRemainingPageNumbers(pagesRemaining);
   return Promise.all(remainingPageNumbers.map(getPage));
@@ -24,6 +32,16 @@ const getBalance = rows => (
   ), 0)
 );
 
+/*
+  The fact that I need do download multiple pages in order to
+  calculate the balance is definitely not ideal.
+
+  In the real world, I'd tell the API devs to either provide the total balance
+  as a property in each response, or to provide a separate endpoint for the balance.
+
+  Obviously there aren't any backend devs in coding tests, so I had to do some ugly
+  shared scope stuff to do this efficiently.
+*/
 const loadBalanceData = () => {
   let rows;
 
