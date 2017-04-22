@@ -54,3 +54,9 @@ td {
   border-top: 1px solid rgba(34, 36, 39, 0.05);
 }
 
+.oops {
+  margin: 2rem auto;
+  background: white;
+  padding: 1rem;
+  width: 95%;
+}

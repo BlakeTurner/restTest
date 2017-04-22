@@ -13,15 +13,23 @@ class App extends Component {
   }
 
   componentDidMount() {
-    loadBalanceData().then((data) => {
-      this.setState(data);
-    });
+    loadBalanceData()
+      .then((data) => {
+        this.setState(data);
+      })
+      .catch(() => {
+        this.setState({ empty: true });
+      });
   }
 
   render() {
     return (
       <div>
         <h1>Bench Test</h1>
+
+        { this.state.empty &&
+          <h4 className="oops">Sorry, No Data Available.</h4>
+        }
 
         { this.state.balance &&
           <table>

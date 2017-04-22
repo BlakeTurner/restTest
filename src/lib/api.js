@@ -1,9 +1,13 @@
-import getJson from 'fetch-json/get';
+import reflect from './promise-reflect';
 
-const FIRST_PAGE = 1;
+const FIRST_PAGE = 0;
 
-const buildUrl = page => `http://resttest.bench.co/transactions/${page}.json`;
-const getPage = page => getJson(buildUrl(page));
+const buildUrl = page => `data/${page}.json`;
+
+const getPage = page => (
+  fetch(buildUrl(page))
+    .then(res => (res.ok ? res.json() : Promise.reject(`No Data Received for page ${page}`)))
+);
 
 const getRemainingPageNumbers = (pagesRemaining) => {
   const numbers = [];
@@ -23,7 +27,8 @@ const getRemainingPageNumbers = (pagesRemaining) => {
 */
 const fetchRemainingPages = (pagesRemaining) => {
   const remainingPageNumbers = getRemainingPageNumbers(pagesRemaining);
-  return Promise.all(remainingPageNumbers.map(getPage));
+  const promises = remainingPageNumbers.map(getPage);
+  return Promise.all(promises.map(reflect));
 };
 
 const getBalance = rows => (
@@ -54,8 +59,12 @@ const loadBalanceData = () => {
     })
     .then((results) => {
       // Flatten transactions arrays into the rows array
-      results.forEach(({ transactions }) => {
-        rows = [...rows, ...transactions];
+      results.forEach(({ error, result }) => {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        rows = [...rows, ...result.transactions];
       });
 
       return {
