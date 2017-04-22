@@ -1,6 +1,6 @@
 # restTest
 
-This repo meets the [restTest requirements](http://resttest.bench.co/front-end)
+This repo meets the [restTest requirements](http://resttest.bench.co/front-end).
 
 
 ## Usage
@@ -13,3 +13,7 @@ cd restTest
 npm i
 npm start
 ```
+
+## Working version
+
+You can visit a working version on [Github Pages](https://blaketurner.github.io/restTest/).
