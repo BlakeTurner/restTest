@@ -1,0 +1,51 @@
+body {
+  background: #EFEDE8;
+  font-family: "LLCircularWeb", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 16px;
+}
+
+h1 {
+  background: #098B8C;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+table {
+  width: 95%;
+  margin: 2rem auto;
+  background: white;
+}
+
+tr {
+  color: #098B8C;
+  text-align: left;
+}
+
+tr td:last-child,
+tr th:last-child {
+  text-align: right;
+  padding-right: 2rem;
+}
+
+tr td:first-child,
+tr th:first-child {
+  padding-left: 2rem;
+}
+
+tbody tr:nth-child(odd) {
+  color: black;
+}
+
+td, th {
+  padding: 1rem 0;
+}
+
+th {
+  font-size: 1.25rem;
+}
+
+td {
+  border-top: 1px solid rgba(34, 36, 39, 0.05);
+}
+
