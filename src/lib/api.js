@@ -24,6 +24,9 @@ const getRemainingPageNumbers = (pagesRemaining) => {
   Obviously this is a solution that doesn't scale,
   but I thought it would be a nice tweak considering I
   knew how few pages there were.
+
+  I also map the promises through the reflect function,
+  which allows Promise.all to return even rejected promises.
 */
 const fetchRemainingPages = (pagesRemaining) => {
   const remainingPageNumbers = getRemainingPageNumbers(pagesRemaining);
@@ -45,7 +48,7 @@ const getBalance = rows => (
   as a property in each response, or to provide a separate endpoint for the balance.
 
   Obviously there aren't any backend devs in coding tests, so I had to do some ugly
-  shared scope stuff to do this efficiently.
+  shared scope stuff to do load all pages and calculate the balance.
 */
 const loadBalanceData = () => {
   let rows;

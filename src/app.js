@@ -28,7 +28,7 @@ class App extends Component {
         <h1>Bench Test</h1>
 
         { this.state.empty &&
-          <h4 className="oops">Sorry, No Data Available.</h4>
+          <h4 className="empty-list">Sorry, No Data Available.</h4>
         }
 
         { this.state.balance &&

@@ -14,6 +14,9 @@ npm i
 npm start
 ```
 
+`npm start` uses Webpack Dev Server to build an in-memory bundle.
+Use `npm build` to update the actual bundle.
+
 ## Working version
 
 You can visit a working version on [Github Pages](https://blaketurner.github.io/restTest/).
